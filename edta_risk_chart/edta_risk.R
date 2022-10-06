@@ -1,5 +1,6 @@
 library("dplyr")
 library("ggplot2")
+library(purrr)
 
 ac_rc <- function(data_initial){
   data <- data_initial[-1, ]
@@ -18,11 +19,15 @@ ac_rc <- function(data_initial){
   data
 }
 
-data_initial <- data.frame("SRC"="A", "RA"=6, "RC"=12, "RC_Available"=0.5, "T2"=30, "T3"=60)
+data_initial <- list(
+  data.frame("SRC"="A", "RA"=6, "RC"=12, "RC_Available"=0.5, "T2"=30, "T3"=60),
+  data.frame("SRC"="B", "RA"=6, "RC"=8, "RC_Available"=0, "T2"=30, "T3"=60),
+  data.frame("SRC"="C", "RA"=14, "RC"=30, "RC_Available"=0.45, "T2"=30, "T3"=60))
+  
+data <- map_dfr(data_initial, ac_rc)
 
-supply <- data_initial %>% 
-  ac_rc() %>%
-  mutate("T0A"=RA*1.0, "T2A"=RA+RC*RC_Available*0.2, "T3A"=RA+RC*RC_Available)
+supply <- data %>% 
+  mutate("T0A"=RA*1.0, "T2A"=ifelse(0.2>RC_Available, RA+RC*RC_Available, RA+RC*0.2), "T3A"=RA+RC*RC_Available)
 
 demand <- read.csv("./workspace/run-amc/edta_risk_chart/early_demand.csv", stringsAsFactors=FALSE)
 
@@ -37,15 +42,17 @@ data_fill <- left_join(supply, demand, by="SRC") %>%
                           fill_rate>=0.70 ~ 2,
                           fill_rate>=0 ~ 1))
 
-
-ggplot(data_fill, aes(RA, RC, fill=Risk)) + 
+for(src in unique(data_fill$SRC)){
+  src_data <- filter(data_fill, SRC==src)
+  
+  g <- ggplot(src_data, aes(RA, RC, fill=Risk)) + 
   geom_tile(color="black") +
   scale_fill_gradientn(colors=c("#F05454", "#FFC990", "#FFF990", "#3DCC91"),
                        labels=c("extreme", "major", "modest", "minor")) +
-  scale_x_continuous(breaks=seq(0, 6, by=1)) +
-  scale_y_continuous(breaks=seq(0, 12, by=1)) +
   theme_bw() +
   theme(text=element_text(size=20),
         axis.text=element_text(size=20),
-        legend.text=element_text(size=20))                       
+        legend.text=element_text(size=20))
+  print(g)
+}
                        
