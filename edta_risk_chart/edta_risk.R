@@ -24,7 +24,7 @@ supply <- data_initial %>%
   ac_rc() %>%
   mutate("T0A"=RA*1.0, "T2A"=RA+RC*RC_Available*0.2, "T3A"=RA+RC*RC_Available)
 
-demand <- read.csv("early_demand.csv", stringsAsFactors=FALSE)
+demand <- read.csv("./workspace/run-amc/edta_risk_chart/early_demand.csv", stringsAsFactors=FALSE)
 
 data_fill <- left_join(supply, demand, by="SRC") %>%
   mutate("available"=case_when(Day<T2 ~ T0A, Day<T3 ~ T2A, Day>=T3 ~ T3A)) %>%

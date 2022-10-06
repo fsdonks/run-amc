@@ -3,7 +3,7 @@ library("ggplot2")
 library("tidyr")
 library("janitor")
 
-data <- read.csv("results_archive.csv", stringsAsFactors=FALSE) %>%
+data <- read.csv("./workspace/run-amc/taa_risk_chart/results_archive.csv", stringsAsFactors=FALSE) %>%
   mutate(fill=AC.fill+RC.fill, demand=total.quantity) %>%
   select(rep.seed, SRC, AC, RC, phase, fill, demand) %>%
   group_by(SRC, AC, RC, phase) %>%
