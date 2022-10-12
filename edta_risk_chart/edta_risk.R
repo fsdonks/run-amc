@@ -2,6 +2,8 @@ library("dplyr")
 library("ggplot2")
 library(purrr)
 
+out_location="./workspace/run-amc/outputs/"
+
 ac_rc <- function(data_initial){
   data <- data_initial[-1, ]
   
@@ -37,22 +39,30 @@ data_fill <- left_join(supply, demand, by="SRC") %>%
   filter(Day<=T3) %>%
   group_by(SRC, RA, RC) %>%
   summarize(fill=sum(fill), Demand=sum(Demand), fill_rate=fill/Demand) %>%
-  mutate("Risk"=case_when(fill_rate>=0.90 ~ 4,
+  mutate("Risk"=case_when(fill_rate==1 ~ 5,
+                          fill_rate>=0.90 ~ 4,
                           fill_rate>=0.80 ~ 3,
                           fill_rate>=0.70 ~ 2,
                           fill_rate>=0 ~ 1))
+
+write.table(data_fill, paste(out_location, "edta_data.txt"), sep="\t", row.names=FALSE)
+
+risk_colors=c("#F05454", "#FFC990", "#FFF990", "#3DCC91", "#005000")
+risk_labels=c("extreme", "major", "modest", "minor", "none")
 
 for(src in unique(data_fill$SRC)){
   src_data <- filter(data_fill, SRC==src)
   
   g <- ggplot(src_data, aes(RA, RC, fill=Risk)) + 
   geom_tile(color="black") +
-  scale_fill_gradientn(colors=c("#F05454", "#FFC990", "#FFF990", "#3DCC91"),
-                       labels=c("extreme", "major", "modest", "minor")) +
+  scale_fill_gradientn(colors=risk_colors,
+                       labels=risk_labels) +
+  ggtitle(src) +
   theme_bw() +
   theme(text=element_text(size=20),
         axis.text=element_text(size=20),
         legend.text=element_text(size=20))
   print(g)
+  ggsave(paste(out_location, "edta_", src, ".png", sep=""))
 }
                        

@@ -1,7 +1,9 @@
 library("dplyr")
 library("ggplot2")
 library("tidyr")
+library("writexl")
 
+out_location="./workspace/run-amc/outputs/"
 input <- read.csv("./workspace/run-amc/taa_risk_chart/results_archive.csv", stringsAsFactors=FALSE)
 input$phase <- gsub("-", "", input$phase)
 
@@ -21,6 +23,8 @@ data <- input %>%
                           score>=0.80 ~ 3,
                           score>=0.70 ~ 2,
                           score>=0 ~ 1))
+
+write.table(data, paste(out_location, "taa_data.txt"), sep="\t", row.names=FALSE)
 
 risk_colors=c("#F05454", "#FFC990", "#FFF990", "#3DCC91", "#005000")
 risk_labels=c("extreme", "major", "modest", "minor", "none")
@@ -45,6 +49,7 @@ for(src in unique(data$SRC)){
               axis.text=element_text(size=20),
               legend.text=element_text(size=20))
     print(g)
+    ggsave(paste(out_location, "taa_", src, ".png", sep=""))
 }
 
 #continuous color scale, but John doesn't like this as much as discrete colors
