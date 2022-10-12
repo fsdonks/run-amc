@@ -16,39 +16,43 @@ data <- input %>%
   select(SRC, RA, RC, phase, fill_rate) %>%
   pivot_wider(names_from=phase, values_from=fill_rate) %>%
   mutate(score=0.25*comp+0.75*phase1) %>%
-  mutate("risk"=case_when(score>=0.90 ~ 4,
+  mutate("risk"=case_when(score==1 ~ 5,
+                          score>=0.90 ~ 4,
                           score>=0.80 ~ 3,
                           score>=0.70 ~ 2,
                           score>=0 ~ 1))
 
+risk_colors=c("#F05454", "#FFC990", "#FFF990", "#3DCC91", "#005000")
+risk_labels=c("extreme", "major", "modest", "minor", "none")
+
 for(src in unique(data$SRC)){
   src_data <- filter(data, SRC==src)
-  
-  if(length(unique(src_data$risk))==4){
-    g <- ggplot(src_data, aes(RA, RC, fill=risk)) + 
-          geom_tile(color="black") +
-          ggtitle(src) +
-          scale_fill_gradientn(colors=c("#F05454", "#FFC990", "#FFF990", "#3DCC91"),
-                               labels=c("extreme", "major", "modest", "minor")) +
-          theme_bw() +
-          theme(text=element_text(size=20),
-                axis.text=element_text(size=20),
-                legend.text=element_text(size=20))
+  risks = sort(unique(src_data$risk))
+  #Did this so that something works but
+  #todo: 
+  #should have same legend for all charts (can I add a manual legend?)
+  #should get rid of color gradient for discrete color legend
+  colors_subset=risk_colors[risks]
+  labels_subset=risk_labels[risks]
+  g <- ggplot(src_data, aes(RA, RC, fill=risk)) + 
+        geom_tile(color="black") +
+        ggtitle(src) +
+        scale_fill_gradientn(colors=colors_subset,
+                             labels=labels_subset,
+                             breaks=risks) +
+        theme_bw() +
+        theme(text=element_text(size=20),
+              axis.text=element_text(size=20),
+              legend.text=element_text(size=20))
     print(g)
-  } else {
-    print(src)
-  }
 }
 
-#experimental
-src_data <- filter(data, SRC=="44693K000")
-print(length(unique(src_data$risk)))
-
-a<-ggplot(filter(data, src=="44693K000"), aes(RA, RC, fill=risk)) + 
+#continuous color scale, but John doesn't like this as much as discrete colors
+a<-ggplot(filter(data, SRC=="87312K000"), aes(RA, RC, fill=score)) + 
   geom_tile(color="black") +
-  scale_fill_gradientn(colors=c("#F05454", "#FFC990"),
-                       labels=c("extreme", "major"),
-                       breaks=c(1, 2)) +
+  scale_fill_gradient(low = "red",
+                        high = "green")+
+
   theme_bw() +
   theme(text=element_text(size=20),
         axis.text=element_text(size=20),
