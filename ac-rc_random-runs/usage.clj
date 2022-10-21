@@ -6,7 +6,9 @@
 (def proj (a/load-project path))
 (def phases [["comp" 1 821] ["phase-1" 822 967]])
 
-(def results (rand-runs-ac-rc proj :reps 2 :phases phases
+(def results (binding [r/*project->experiments*
+                       project->experiments-ac-rc]
+               (rand-runs proj :reps 2 :phases phases
                               :lower 0 :upper 0.2
                               :compo-lengths r/default-compo-lengths)) 
 
