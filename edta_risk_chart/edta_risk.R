@@ -21,12 +21,13 @@ ac_rc <- function(data_initial){
   data
 }
 
-data_initial <- list(
-  data.frame("SRC"="A", "RA"=6, "RC"=12, "RC_Available"=0.5, "T2"=30, "T3"=60),
-  data.frame("SRC"="B", "RA"=6, "RC"=8, "RC_Available"=0, "T2"=30, "T3"=60),
-  data.frame("SRC"="C", "RA"=14, "RC"=30, "RC_Available"=0.45, "T2"=30, "T3"=60))
-  
-data <- map_dfr(data_initial, ac_rc)
+data_initial <-
+  as.data.frame(read_excel("./workspace/run-amc/edta_risk_chart/Data Initial List.xlsx", trim_ws = TRUE, col_names = TRUE))
+
+split_data <- 
+  split(data_initial, f = sort(as.numeric(rownames(data_initial))))
+
+data <- map_dfr(split_data, ac_rc)
 
 supply <- data %>% 
   mutate("T0A"=RA*1.0, "T2A"=ifelse(0.2>RC_Available, RA+RC*RC_Available, RA+RC*0.2), "T3A"=RA+RC*RC_Available)

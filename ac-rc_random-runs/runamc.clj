@@ -1,15 +1,17 @@
 ;This namespace builds on the functionality in marathon.analysis.random.
 ;It modifies several functions in that namesapce to do AC and RC supply variations with random initial conditions. 
 (ns marathon.analysis.runamc
-  (:require [marathon.analysis.random :as r]
-            [marathon.analysis :as a]
-            [marathon.analysis.util :as util]
-            [marathon.analysis.experiment :as e]
-            [marathon.analysis.nolh :as nolh]
-            [marathon.ces.core :as c]
-            [spork.util.table :as tbl]
-            [spork.util.general :as gen]
-            [clojure.spec.alpha :as s]))
+  (:require
+   [taa.capacity :as capacity]
+   [marathon.analysis.random :as r]
+   [marathon.analysis :as a]
+   [marathon.analysis.util :as util]
+   [marathon.analysis.experiment :as e]
+   [marathon.analysis.nolh :as nolh]
+   [marathon.ces.core :as c]
+   [spork.util.table :as tbl]
+   [spork.util.general :as gen]
+   [clojure.spec.alpha :as s]))
 
 (defn adjust-rc ;;new
   [rc-demand rec]
