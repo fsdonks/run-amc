@@ -1,7 +1,6 @@
 library("dplyr")
 library("ggplot2")
 library("tidyr")
-library("writexl")
 
 out_location="./workspace/run-amc/outputs/"
 input <- read.csv("./workspace/run-amc/taa_risk_chart/results_archive.csv", stringsAsFactors=FALSE)
@@ -18,27 +17,27 @@ data <- input %>%
   select(SRC, RA, RC, phase, fill_rate) %>%
   pivot_wider(names_from=phase, values_from=fill_rate) %>%
   mutate(score=0.25*comp+0.75*phase1) %>%
-  mutate("risk"=case_when(score==1 ~ 5,
+  mutate("Risk"=case_when(score>=0.999 ~ 5,
                           score>=0.90 ~ 4,
                           score>=0.80 ~ 3,
                           score>=0.70 ~ 2,
                           score>=0 ~ 1))
 
-write.table(data, paste(out_location, "taa_data.txt"), sep="\t", row.names=FALSE)
+write.table(data, paste(out_location, "taa-risk_output.txt"), sep="\t", row.names=FALSE)
 
 risk_colors=c("#F05454", "#FFC990", "#FFF990", "#3DCC91", "#005000")
 risk_labels=c("extreme", "major", "modest", "minor", "none")
 
 for(src in unique(data$SRC)){
   src_data <- filter(data, SRC==src)
-  risks = sort(unique(src_data$risk))
+  risks = sort(unique(src_data$Risk))
   #Did this so that something works but
   #todo: 
   #should have same legend for all charts (can I add a manual legend?)
   #should get rid of color gradient for discrete color legend
   colors_subset=risk_colors[risks]
   labels_subset=risk_labels[risks]
-  g <- ggplot(src_data, aes(RA, RC, fill=risk)) + 
+  g <- ggplot(src_data, aes(RA, RC, fill=Risk)) + 
         geom_tile(color="black") +
         ggtitle(src) +
         scale_fill_gradientn(colors=colors_subset,

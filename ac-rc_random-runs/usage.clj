@@ -8,7 +8,7 @@
 
 (def results (binding [r/*project->experiments*
                        project->experiments-ac-rc]
-               (rand-runs proj :reps 2 :phases phases
+               (r/rand-runs proj :reps 2 :phases phases
                               :lower 0 :upper 0.2
                               :compo-lengths r/default-compo-lengths)) 
 
