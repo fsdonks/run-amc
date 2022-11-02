@@ -40,7 +40,7 @@ make_taa_charts <- function(out_location, inputfiles, weights){
   
   #Prep input files for separation; capture filenames
   names <- substr(inputfiles, 9, 13)
-  all_files <- lapply(inputfiles, read.csv)
+  all_files <- lapply(inputfiles, read.csv, sep="\t")
   names(all_files) <- substr(inputfiles, 9, 13)
   
   i <- as.numeric(1)

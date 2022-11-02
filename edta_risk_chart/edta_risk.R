@@ -42,7 +42,7 @@ make_edta_charts <- function(supply_path, demand_path, out_location){
     mutate("available"=case_when(Day<=T2 ~ T0A, Day<=T3 ~ T2A, Day>=T3 ~ T3A)) %>%
     mutate("fill"=ifelse(available>Demand, Demand, available))%>%
     filter(Day<=T3) %>%
-    group_by(SRC, RA, RC, Day) %>%
+    group_by(SRC, RA, RC) %>%
     summarize(fill=sum(fill), Demand=sum(Demand), fill_rate=fill/Demand) %>%
     #covers the case where we have no demand<=day T3
     mutate(fill_rate=ifelse(is.na(fill_rate), 1, fill_rate)) %>%
@@ -53,7 +53,7 @@ make_edta_charts <- function(supply_path, demand_path, out_location){
                             fill_rate>=0 ~ 1))
   
   # #writes the dataframe to an Excel file
-  write_xlsx(data_fill, paste(out_location, "data_fill_by_day.xlsx"))
+  write_xlsx(data_fill, paste(out_location, "edta_output.xlsx"))
   
   #write.table(data_fill, paste(out_location, "edta_output.txt"), sep="\t", row.names=FALSE)
   
