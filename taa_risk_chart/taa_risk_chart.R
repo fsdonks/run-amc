@@ -3,8 +3,39 @@ library("ggplot2")
 library("tidyr")
 library(writexl)
 library(readxl)
+library(purrr)
 
-make_taa_charts <- function(out_location, inputfiles){
+compute_score <- function(weights, df){
+  df["score"]<-0
+  for(w in names(weights)){
+    df["score"]<-df["score"]+df[w]*weights[w]
+  }
+  df
+}
+#This function computes the scores and risks for each SRC's AC-RC permutation 
+functor <- 
+  function(input, weights){
+    compute_score_partial <- partial(compute_score, weights)
+    input %>%
+      rename(RA=AC) %>%
+      mutate(fill=AC.fill+RC.fill, demand=total.quantity) %>%
+      mutate(fill=ifelse(RA+RC==0, 0, fill), demand=ifelse(RA+RC==0, 1, demand)) %>%
+      select(rep.seed, SRC, RA, RC, phase, fill, demand) %>%
+      group_by(SRC, RA, RC, phase) %>%
+      summarize(fill=sum(fill), demand=sum(demand)) %>%
+      mutate(fill_rate=fill/demand) %>% 
+      select(SRC, RA, RC, phase, fill_rate) %>%
+      pivot_wider(names_from=phase, values_from=fill_rate) %>%
+      #mutate(score=0.25*comp+0.75*phase1) 
+      compute_score_partial %>%
+      mutate("Risk"=case_when(score>=0.95 ~ 5,
+                              score>=0.90 ~ 4,
+                              score>=0.80 ~ 3,
+                              score>=0.70 ~ 2,
+                              score>=0 ~ 1))}
+    
+    
+make_taa_charts <- function(out_location, inputfiles, weights){
   
   #Prep input files for separation; capture filenames
   names <- substr(inputfiles, 9, 13)
@@ -31,33 +62,11 @@ make_taa_charts <- function(out_location, inputfiles){
   #This function can split the list of dataframes, if needed
   #list2env(all_files, envir=.GlobalEnv)
   
-  #This function computes the scores and risks for each SRC's AC-RC permutation 
-  functor <- 
-    function(input){
-      
-    input %>%
-    rename(RA=AC) %>%
-    mutate(fill=AC.fill+RC.fill, demand=total.quantity) %>%
-    mutate(fill=ifelse(RA+RC==0, 0, fill), demand=ifelse(RA+RC==0, 1, demand)) %>%
-    select(rep.seed, SRC, RA, RC, phase, fill, demand) %>%
-    group_by(SRC, RA, RC, phase) %>%
-    summarize(fill=sum(fill), demand=sum(demand)) %>%
-    mutate(fill_rate=fill/demand) %>% 
-    select(SRC, RA, RC, phase, fill_rate) %>%
-    pivot_wider(names_from=phase, values_from=fill_rate) %>%
-    mutate(score=0.25*comp+0.75*phase1) %>%
-    mutate("Risk"=case_when(score>=0.95 ~ 5,
-                            score>=0.90 ~ 4,
-                            score>=0.80 ~ 3,
-                            score>=0.70 ~ 2,
-                            score>=0 ~ 1))
-  }
-  
   #Loop through list of dataframes, applying function to each item
   i <- as.numeric(1)
   
   while(i <= n) {
-    all_files[[i]] <- functor(all_files[[i]])
+    all_files[[i]] <- functor(all_files[[i]], weights)
     i <- i+1
   }
   
