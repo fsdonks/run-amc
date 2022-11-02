@@ -9,4 +9,4 @@ weights<- c("comp"=0.25, "phase1"=0.75)
 
 results_files=list("./workspace/run-amc/taa_risk_chart/results_test.csv",
                    "./workspace/run-amc/taa_risk_chart/results_archive.csv")
-make_taa_charts("./workspace/run-amc/outputs/", results_files, weights)                 
+make_taa_charts("./workspace/run-amc/outputs/", results_files, weights)

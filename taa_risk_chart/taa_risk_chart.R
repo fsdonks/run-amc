@@ -24,6 +24,7 @@ functor <-
       group_by(SRC, RA, RC, phase) %>%
       summarize(fill=sum(fill), demand=sum(demand)) %>%
       mutate(fill_rate=fill/demand) %>% 
+      mutate(fill_rate=ifelse(is.na(fill_rate), 1, fill_rate)) %>%
       select(SRC, RA, RC, phase, fill_rate) %>%
       pivot_wider(names_from=phase, values_from=fill_rate) %>%
       #mutate(score=0.25*comp+0.75*phase1) 
@@ -105,7 +106,7 @@ make_taa_charts <- function(out_location, inputfiles, weights){
     colors_subset=risk_colors[risks]
     labels_subset=risk_labels[risks]
     g <- ggplot(src_data, aes(RA, RC, fill=Risk)) + 
-      geom_tile(color="black", position = position_nudge(x = 0.5, y = 0.5)) +
+      geom_tile(color="black") +
       #ggtitle(src) +
       scale_fill_gradientn(colors=colors_subset,
                            labels=labels_subset,

@@ -67,7 +67,7 @@ make_edta_charts <- function(supply_path, demand_path, out_location){
     labels_subset=risk_labels[risks]
     
     g <- ggplot(src_data, aes(RA, RC, fill=Risk)) + 
-      geom_tile(color="black", position = position_nudge(x = 0.5, y = 0.5)) +
+      geom_tile(color="black") +
       scale_fill_gradientn(colors=colors_subset,
                            labels=labels_subset, breaks=risks) +
       #ggtitle(src) +
