@@ -46,7 +46,7 @@ make_taa_charts <- function(out_location, inputfiles){
     select(SRC, RA, RC, phase, fill_rate) %>%
     pivot_wider(names_from=phase, values_from=fill_rate) %>%
     mutate(score=0.25*comp+0.75*phase1) %>%
-    mutate("Risk"=case_when(score>=0.999 ~ 5,
+    mutate("Risk"=case_when(score>=0.95 ~ 5,
                             score>=0.90 ~ 4,
                             score>=0.80 ~ 3,
                             score>=0.70 ~ 2,

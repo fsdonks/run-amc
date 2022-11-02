@@ -4,8 +4,6 @@ library(purrr)
 library(readxl)
 library(writexl)
 
-out_location="./workspace/run-amc/outputs/"
-
 ac_rc <- function(data_initial){
   data <- data_initial[-1, ]
   
@@ -23,7 +21,7 @@ ac_rc <- function(data_initial){
   data
 }
 
-make_edta_charts <- function(supply_path, demand_path){
+make_edta_charts <- function(supply_path, demand_path, out_location){
   data_initial <-
     read_excel(supply_path, trim_ws = TRUE, col_names = TRUE)
   
@@ -46,7 +44,9 @@ make_edta_charts <- function(supply_path, demand_path){
     filter(Day<=T3) %>%
     group_by(SRC, RA, RC, Day) %>%
     summarize(fill=sum(fill), Demand=sum(Demand), fill_rate=fill/Demand) %>%
-    mutate("Risk"=case_when(fill_rate>=0.999 ~ 5,
+    #covers the case where we have no demand<=day T3
+    mutate(fill_rate=ifelse(is.na(fill_rate), 1, fill_rate)) %>%
+    mutate("Risk"=case_when(fill_rate>=0.95 ~ 5,
                             fill_rate>=0.90 ~ 4,
                             fill_rate>=0.80 ~ 3,
                             fill_rate>=0.70 ~ 2,
