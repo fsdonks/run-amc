@@ -4,6 +4,7 @@ library("tidyr")
 library(writexl)
 library(readxl)
 library(purrr)
+#also depends on util.R
 
 compute_score <- function(weights, df){
   df["score"]<-0
@@ -93,35 +94,11 @@ make_taa_charts <- function(out_location, inputfiles, weights){
   
   write.table(data, paste(out_location, "taa-risk_output.txt"), sep="\t", row.names=FALSE)
   
-  risk_colors=c("#F05454", "#FFC990", "#FFF990", "#3DCC91", "#009E73")
-  risk_labels=c("extreme", "major", "modest", "minor", "none")
+  #spit the risk charts
+  #util.R
+  risk_charts(data, out_location)
   
-  for(src in unique(data$SRC)){
-    src_data <- filter(data, SRC==src)
-    risks = sort(unique(src_data$Risk))
-    #Did this so that something works but
-    #todo: 
-    #should have same legend for all charts (can I add a manual legend?)
-    #should get rid of color gradient for discrete color legend
-    colors_subset=risk_colors[risks]
-    labels_subset=risk_labels[risks]
-    g <- ggplot(src_data, aes(RA, RC, fill=Risk)) + 
-      geom_tile(color="black") +
-      #ggtitle(src) +
-      scale_fill_gradientn(colors=colors_subset,
-                           labels=labels_subset,
-                           breaks=risks) +
-      theme_bw() +
-      theme(text=element_text(size=20),
-            axis.text=element_text(size=20),
-            legend.text=element_text(size=20),
-            panel.grid.major = element_blank(), 
-            panel.grid.minor = element_blank())
-    print(g)
-    ggsave(paste(out_location, "taa_", src, ".png", sep=""))
-  }
-  
-  #continuous color scale, but John doesn't like this as much as discrete colors
+  #continuous color scale risk chart, but John doesn't like this as much as discrete colors
   a<-ggplot(filter(data, SRC=="87312K000"), aes(RA, RC, fill=score)) + 
     geom_tile(color="black") +
     scale_fill_gradient(low = "red",

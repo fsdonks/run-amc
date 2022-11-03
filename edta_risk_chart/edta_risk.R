@@ -3,6 +3,7 @@ library("ggplot2")
 library(purrr)
 library(readxl)
 library(writexl)
+#also depends on util.R
 
 ac_rc <- function(data_initial){
   data <- data_initial[-1, ]
@@ -55,29 +56,8 @@ make_edta_charts <- function(supply_path, demand_path, out_location){
   # #writes the dataframe to an Excel file
   write_xlsx(data_fill, paste(out_location, "edta_output.xlsx"))
   
-  #write.table(data_fill, paste(out_location, "edta_output.txt"), sep="\t", row.names=FALSE)
+  #spit the risk charts
+  #from util.R
+  risk_charts(data_fill, out_location)
   
-  risk_colors=c("#F05454", "#FFC990", "#FFF990", "#3DCC91", "#009E73")
-  risk_labels=c("extreme", "major", "modest", "minor", "none")
-  
-  for(src in unique(data_fill$SRC)){
-    src_data <- filter(data_fill, SRC==src)
-    risks = sort(unique(src_data$Risk))
-    colors_subset=risk_colors[risks]
-    labels_subset=risk_labels[risks]
-    
-    g <- ggplot(src_data, aes(RA, RC, fill=Risk)) + 
-      geom_tile(color="black") +
-      scale_fill_gradientn(colors=colors_subset,
-                           labels=labels_subset, breaks=risks) +
-      #ggtitle(src) +
-      theme_bw() +
-      theme(text=element_text(size=20),
-            axis.text=element_text(size=20),
-            legend.text=element_text(size=20),
-            panel.grid.major = element_blank(), 
-            panel.grid.minor = element_blank())
-    print(g)
-    ggsave(paste(out_location, "edta_", src, ".png", sep=""))
-  }
 }

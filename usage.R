@@ -1,5 +1,8 @@
+
 my_runamc_folder=paste(getwd(), "/workspace/run-amc/", sep='')
+source(paste(my_runamc_folder, "util.R", sep=''))
 #load code from the two runamc scripts
+#these will both depend on utils.R as well.
 source(paste(my_runamc_folder, "edta_risk_chart/edta_risk.R", sep=''))
 source(paste(my_runamc_folder, "taa_risk_chart/taa_risk_chart.R", sep=''))
 
