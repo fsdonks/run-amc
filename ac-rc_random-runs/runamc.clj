@@ -13,6 +13,8 @@
    [spork.util.general :as gen]
    [clojure.spec.alpha :as s]))
 
+;;hack in a patch for now
+(ns marathon.analysis.random)
 (defn adjust-rc ;;new
   [rc-demand rec]
   (if (= (:DemandGroup rec) "RC_NonBOG-War")
@@ -67,9 +69,11 @@
          :tables
          :SupplyRecords
          tbl/table-records
-         (mapcat #(r/rand-recs % supply-record-randomizer))
+         (mapcat #(rand-recs % supply-record-randomizer))
          tbl/records->table
          (assoc-in proj2 [:tables :SupplyRecords]))))
+
+(ns marathon.analysis.runamc)
 
 (defn ac-rc-supply-reduction-experiments  ;;new
   "This is a copy of this function from the marathon.analysis.experiment namespace.
