@@ -22,7 +22,7 @@ ac_rc <- function(data_initial){
   data
 }
 
-make_edta_charts <- function(supply_path, demand_path, out_location){
+make_edta_charts <- function(supply_path, demand_path, out_location, supply_demand){
   data_initial <-
     read_excel(supply_path, trim_ws = TRUE, col_names = TRUE)
   
@@ -53,8 +53,15 @@ make_edta_charts <- function(supply_path, demand_path, out_location){
                             fill_rate>=0.70 ~ 2,
                             fill_rate>=0 ~ 1))
   
-  # #writes the dataframe to an Excel file
-  write_xlsx(data_fill, paste(out_location, "edta_output.xlsx"))
+  
+  x_mark <- read_excel(supply_demand, trim_ws = TRUE, col_names = TRUE)
+  x_mark$RC <- as.numeric(x_mark$Total - x_mark$RA)
+  x_mark <- subset(x_mark, select = c(SRC, RA, RC))
+  x_mark <- rename(x_mark, prog_RA = RA, prog_RC = RC)
+  data_fill <- left_join(data_fill, x_mark, by="SRC")
+  
+  #writes the dataframe to an Excel file
+  write_xlsx(data_fill, paste(out_location, "edta_output.xlsx", sep = ''))
   
   #spit the risk charts
   #from util.R
