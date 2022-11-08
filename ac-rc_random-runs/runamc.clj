@@ -19,13 +19,28 @@
     (assoc rec :Quantity rc-demand)
     rec))	
 
+(defn rc-record
+  "Returns the rc-record in the project.  Throw an error if we don't
+  find an rc record because we need the rc record for
+  rc-unavailability so we should have 1 RC record for every SRC, even
+  if the quantity is 0.  The project has been filtered down to one SRC
+  only at this point."
+  [proj]
+  (let [{:keys [SRC] :as rec} (->> proj
+                                   :tables
+                                   :SupplyRecords
+                                   tbl/table-records
+                                   (filter #(= "RC" (:Component %)))
+                                   first)]
+    (if rec
+      rec
+      (throw (Exception. (str "There was no RC record for " SRC))))))
+  
 (defn rc-proj  ;;new
   [proj]
-  (let [supply (-> proj :tables :SupplyRecords tbl/table-records)
-        src (-> proj :tables :SupplyRecords tbl/table-records first :SRC)
-        percent (:rc-unavailable (:Tags (first supply)))
-        rc (:Quantity (first (filter #(= "RC" (:Component %)) supply)))
-        rc-demand (int (* rc percent))]
+  (let [{:keys [Quantity Tags]} (rc-record proj) 
+        percent (:rc-unavailable Tags)
+        rc-demand (int (* Quantity percent))]
     (->> proj 
          :tables 
          :DemandRecords 
