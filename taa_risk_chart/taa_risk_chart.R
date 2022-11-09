@@ -83,20 +83,13 @@ make_taa_charts <- function(out_location, inputfiles, weights, supply_demand){
     data %>%
     group_by(SRC, RA, RC) %>%
     mutate(risk_min = min(Risk)) %>%
-    ungroup()
-  
-  #Ensure that only the min values are used for plotting
-  data <- 
-    subset(data, Risk == risk_min)
-  
+    ungroup() %>%
+    #Ensure that only the min values are used for plotting
+    subset(Risk == risk_min) %>%
+    add_base_supply(supply_demand)
+
   # #write dataframe to Excel file
   # write_xlsx(data, "test_data.xlsx")
-  
-  x_mark <- read_excel(supply_demand, trim_ws = TRUE, col_names = TRUE)
-  x_mark$RC <- as.numeric(x_mark$Total - x_mark$RA)
-  x_mark <- subset(x_mark, select = c(SRC, RA, RC))
-  x_mark <- rename(x_mark, prog_RA = RA, prog_RC = RC)
-  data <- left_join(data, x_mark, by="SRC")
   
   write.table(data, paste(out_location, "taa-risk_output.txt"), sep="\t", row.names=FALSE)
   
