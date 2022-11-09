@@ -16,7 +16,7 @@ integer_breaks <- function(n=5, ...) {
 
 #Add the baseline supply numbers to the dataframe
 add_base_supply<-function(data, supply_demand) {
-  x_mark <- read_excel(supply_demand, trim_ws = TRUE, col_names = TRUE)
+  x_mark <- read_excel(supply_demand, trim_ws = TRUE, col_names = TRUE, sheet="SupplyDemand")
   x_mark$RC <- as.numeric(x_mark$Total - x_mark$RA)
   x_mark <- subset(x_mark, select = c(SRC, RA, RC))
   x_mark <- rename(x_mark, prog_RA = RA, prog_RC = RC)
