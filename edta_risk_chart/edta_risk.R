@@ -65,6 +65,6 @@ make_edta_charts <- function(supply_path, demand_path, out_location, supply_dema
   
   #spit the risk charts
   #from util.R
-  risk_charts(data_fill, out_location)
+  risk_charts(data_fill, paste(out_location, "edta_", sep=''))
   
 }

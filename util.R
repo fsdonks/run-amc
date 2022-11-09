@@ -45,6 +45,6 @@ risk_charts <- function(data, out_location) {
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank())
     print(g)
-    ggsave(paste(out_location, "taa_", src, ".png", sep=""))
+    ggsave(paste(out_location, src, ".png", sep=""))
   }
 }

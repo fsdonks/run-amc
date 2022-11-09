@@ -102,7 +102,7 @@ make_taa_charts <- function(out_location, inputfiles, weights, supply_demand){
   
   #spit the risk charts
   #util.R
-  risk_charts(data, out_location)
+  risk_charts(data, paste(out_location, "taa_", sep=''))
   
   #continuous color scale risk chart, but John doesn't like this as much as discrete colors
   a<-ggplot(filter(data, SRC=="87312K000"), aes(RA, RC, fill=score)) + 
