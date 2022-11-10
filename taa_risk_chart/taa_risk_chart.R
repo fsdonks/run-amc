@@ -30,14 +30,14 @@ functor <-
       pivot_wider(names_from=phase, values_from=fill_rate) %>%
       #mutate(score=0.25*comp+0.75*phase1) 
       compute_score_partial %>%
-      mutate("Risk"=case_when(score>=0.95 ~ 5,
-                              score>=0.90 ~ 4,
-                              score>=0.80 ~ 3,
-                              score>=0.70 ~ 2,
-                              score>=0 ~ 1))}
+      mutate("Risk"=case_when(score>=0.95 ~ "none",
+                              score>=0.90 ~ "minor",
+                              score>=0.80 ~ "modest",
+                              score>=0.70 ~ "major",
+                              score>=0 ~ "extreme"))}
     
     
-make_taa_charts <- function(out_location, inputfiles, weights, supply_demand){
+make_taa_charts <- function(out_location, inputfiles, weights, supply_demand, show_src){
   
   #Prep input files for separation; capture filenames
   names <- substr(inputfiles, 9, 13)
@@ -95,7 +95,7 @@ make_taa_charts <- function(out_location, inputfiles, weights, supply_demand){
   
   #spit the risk charts
   #util.R
-  risk_charts(data, paste(out_location, "taa_", sep=''))
+  risk_charts(data, paste(out_location, "taa_", sep=''), show_src)
   
   #continuous color scale risk chart, but John doesn't like this as much as discrete colors
   a<-ggplot(filter(data, SRC=="87312K000"), aes(RA, RC, fill=score)) + 

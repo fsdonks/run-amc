@@ -22,7 +22,7 @@ ac_rc <- function(data_initial){
   data
 }
 
-make_edta_charts <- function(supply_path, demand_path, out_location, supply_demand){
+make_edta_charts <- function(supply_path, demand_path, out_location, supply_demand, show_src){
   data_initial <-
     read_excel(supply_path, trim_ws = TRUE, col_names = TRUE)
   
@@ -47,11 +47,11 @@ make_edta_charts <- function(supply_path, demand_path, out_location, supply_dema
     summarize(fill=sum(fill), Demand=sum(Demand), fill_rate=fill/Demand) %>%
     #covers the case where we have no demand<=day T3
     mutate(fill_rate=ifelse(is.na(fill_rate), 1, fill_rate)) %>%
-    mutate("Risk"=case_when(fill_rate>=0.95 ~ 5,
-                            fill_rate>=0.90 ~ 4,
-                            fill_rate>=0.80 ~ 3,
-                            fill_rate>=0.70 ~ 2,
-                            fill_rate>=0 ~ 1)) %>%
+    mutate("Risk"=case_when(fill_rate>=0.95 ~ "none",
+                            fill_rate>=0.90 ~ "minor",
+                            fill_rate>=0.80 ~ "modest",
+                            fill_rate>=0.70 ~ "major",
+                            fill_rate>=0 ~ "extreme")) %>%
     add_base_supply(supply_demand)
   
   #writes the dataframe to an Excel file
@@ -59,6 +59,6 @@ make_edta_charts <- function(supply_path, demand_path, out_location, supply_dema
   
   #spit the risk charts
   #from util.R
-  risk_charts(data_fill, paste(out_location, "edta_", sep=''))
+  risk_charts(data_fill, paste(out_location, "edta_", sep=''), show_src)
   
 }
