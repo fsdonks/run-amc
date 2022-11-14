@@ -1,5 +1,11 @@
-#Used to plot the Programmed Force/Baseline Supply per SRC
+#If we don't have ggplot2 version 3.3.5 or greater, than we will miss
+#legend entries that show in the plot and the order of legend entries
+#may vary.
+if(packageVersion("ggplot2")<"3.3.5") {
+  stop("Need ggplot2 version >= 3.3.5 for intended behavior.")
+}
 
+#Used to plot the Programmed Force/Baseline Supply per SRC
 #Utility functions that are shared between the taa and R risk chart scripts
 
 risk_colors<-c("#F05454", "#FFC990", "#FFF990", "#3DCC91", "#009E73")

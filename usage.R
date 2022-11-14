@@ -17,7 +17,7 @@ make_edta_charts(edta_supply,
                  edta_demand,
                  output_path,
                  supply_demand,
-                 FALSE)
+                 TRUE)
 
 #make the taa risk charts
 weights<- c("comp"=0.25, "phase1"=0.75)
@@ -25,4 +25,4 @@ m4_results_1=paste(my_runamc_folder, "taa_risk_chart/results_test.txt", sep='')
 m4_results_2=paste(my_runamc_folder, "taa_risk_chart/results_archive.txt", sep='')
 results_files=list(m4_results_1,
                    m4_results_2)
-make_taa_charts(output_path, results_files, weights, supply_demand, FASE)
+make_taa_charts(output_path, results_files, weights, supply_demand, TRUE)
