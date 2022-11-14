@@ -43,6 +43,8 @@ risk_charts <- function(data, out_location, show_src) {
       ggplot(src_data, aes(x=RA, y=RC)) + 
       geom_tile(aes(fill=factor(Risk)), colour="black")+
       {if(show_src)ggtitle(src)} +
+      xlab("# of RA Units")+
+      ylab("# of RC Units")+
       scale_fill_manual(name = "Risk", values=setNames(risk_colors, risk_labels))+
       scale_x_continuous(breaks=integer_breaks(5))+
       scale_y_continuous(breaks=integer_breaks(5))+
