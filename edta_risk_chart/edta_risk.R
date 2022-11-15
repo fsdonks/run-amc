@@ -22,7 +22,8 @@ ac_rc <- function(data_initial){
   data
 }
 
-make_edta_charts <- function(supply_path, demand_path, out_location, supply_demand, show_src){
+make_edta_charts <- function(supply_path, demand_path, out_location, supply_demand, 
+                             title_start, subtitle, caption_start){
   data_initial <-
     read_excel(supply_path, trim_ws = TRUE, col_names = TRUE)
   
@@ -59,6 +60,6 @@ make_edta_charts <- function(supply_path, demand_path, out_location, supply_dema
   
   #spit the risk charts
   #from util.R
-  risk_charts(data_fill, paste(out_location, "edta_", sep=''), show_src)
+  risk_charts(data_fill, paste(out_location, "edta_", sep=''), title_start, subtitle, caption_start)
   
 }

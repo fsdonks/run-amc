@@ -9,6 +9,10 @@ source(paste(my_runamc_folder, "edta_risk_chart/edta_risk.R", sep=''))
 source(paste(my_runamc_folder, "taa_risk_chart/taa_risk_chart.R", sep=''))
 supply_demand=paste(my_runamc_folder, "SupplyDemand_Original.xlsx", sep='')
 
+#What appears in the title before -SRC
+edta_title="Early Deploying Unit Risk Matrix"
+edta_subtitle="UPLAN based 94 day future"
+caption_start="Data from BAA86-91"
 #make the edta risk charts
 edta_supply=paste(my_runamc_folder, "edta_risk_chart/Data Initial List.xlsx", sep='')
 edta_demand=paste(my_runamc_folder, "edta_risk_chart/early_demand.csv", sep='')
@@ -17,7 +21,10 @@ make_edta_charts(edta_supply,
                  edta_demand,
                  output_path,
                  supply_demand,
-                 TRUE)
+                 edta_title,
+                 edta_subtitle,
+                 caption_start
+                 )
 
 #make the taa risk charts
 weights<- c("comp"=0.25, "phase1"=0.75)
@@ -25,4 +32,9 @@ m4_results_1=paste(my_runamc_folder, "taa_risk_chart/results_test.txt", sep='')
 m4_results_2=paste(my_runamc_folder, "taa_risk_chart/results_archive.txt", sep='')
 results_files=list(m4_results_1,
                    m4_results_2)
-make_taa_charts(output_path, results_files, weights, supply_demand, TRUE)
+#What appears in the title before -SRC
+taa_title="Force Generation Risk Matrix"
+taa_subtitle="OPS based 36 year future"
+
+make_taa_charts(output_path, results_files, weights, supply_demand,
+                taa_title, taa_subtitle, caption_start)

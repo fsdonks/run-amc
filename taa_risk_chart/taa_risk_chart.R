@@ -37,7 +37,8 @@ functor <-
                               score>=0 ~ "extreme"))}
     
     
-make_taa_charts <- function(out_location, inputfiles, weights, supply_demand, show_src){
+make_taa_charts <- function(out_location, inputfiles, weights, supply_demand,
+                            title_start, subtitle, caption_start){
   
   #Prep input files for separation; capture filenames
   names <- substr(inputfiles, 9, 13)
@@ -95,7 +96,7 @@ make_taa_charts <- function(out_location, inputfiles, weights, supply_demand, sh
   
   #spit the risk charts
   #util.R
-  risk_charts(data, paste(out_location, "taa_", sep=''), show_src)
+  risk_charts(data, paste(out_location, "taa_", sep=''), title_start, subtitle, caption_start)
   
   #continuous color scale risk chart, but John doesn't like this as much as discrete colors
   a<-ggplot(filter(data, SRC=="87312K000"), aes(RA, RC, fill=score)) + 
