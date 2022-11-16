@@ -69,7 +69,7 @@ make_taa_charts <- function(out_location, inputfiles, weights, supply_demand,
     data %>%
     group_by(SRC, RA, RC) %>%
     #Ensure that only the min scores are used for plotting, should only have one record.
-    slice_min(order_by = score) %>%
+    slice_min(order_by = score, with_ties=FALSE) %>%
     ungroup() %>%
     add_base_supply(supply_demand)
 
