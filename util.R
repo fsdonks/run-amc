@@ -42,8 +42,8 @@ risk_charts <- function(data, out_location, title_start, subtitle, caption_start
       ggplot(src_data, aes(x=RA, y=RC)) + 
       geom_tile(aes(fill=factor(Risk)), colour="black")+
       labs(title=title_start,
-           subtitle=paste("SRC: ", src, " ", src_title, sep=''),
-           caption=paste(caption_start,"/", subtitle, "/Built on ", Sys.Date(), sep='')) +
+           subtitle=src_title,
+           caption=paste("SRC: ", src, "/", caption_start,"/", subtitle, "/Built on ", Sys.Date(), sep='')) +
       xlab("# of RA Units")+
       ylab("# of RC Units")+
       scale_fill_manual(name = "Risk", values=setNames(risk_colors, risk_labels))+
