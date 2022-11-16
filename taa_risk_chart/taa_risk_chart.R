@@ -36,35 +36,22 @@ functor <-
                               score>=0.70 ~ "major",
                               score>=0 ~ "extreme"))}
     
-    
 make_taa_charts <- function(out_location, inputfiles, weights, supply_demand,
                             title_start, subtitle, caption_start){
   
-  #Prep input files for separation; capture filenames
-  names <- substr(inputfiles, 9, 13)
   all_files <- lapply(inputfiles, read.csv, sep="\t")
-  names(all_files) <- substr(inputfiles, 9, 13)
   
   i <- as.numeric(1)
-  n <- as.numeric(length(names))
+  n <- as.numeric(length(all_files))
   
-  #Create risk columns; cleanup phase cols
+  #cleanup phase cols
   while(i <= n) {
     
-    Risk <- rep(i, nrow(all_files[[i]]))
-    all_files[[i]][ , ncol(all_files[[i]]) + 1] <- Risk
-    colnames(all_files[[i]])[ncol(all_files[[i]])] <- paste0("Risk")
-    
     all_files[[i]]$phase <- gsub("-", "", all_files[[i]]$phase)
-    
     i <- i+1
     
   }
-  rm(Risk)
-  
-  #This function can split the list of dataframes, if needed
-  #list2env(all_files, envir=.GlobalEnv)
-  
+
   #Loop through list of dataframes, applying function to each item
   i <- as.numeric(1)
   
@@ -77,16 +64,13 @@ make_taa_charts <- function(out_location, inputfiles, weights, supply_demand,
   data <- 
     bind_rows(all_files, .id = "column_label")
   
-  data$risk_min <- NA
-  
-  #Determine the min risk per SRC-AC-RC group; save in risk_min
+  #Determine the min risk per SRC-AC-RC group; save in score_min
   data <-
     data %>%
     group_by(SRC, RA, RC) %>%
-    mutate(risk_min = min(Risk)) %>%
+    #Ensure that only the min scores are used for plotting, should only have one record.
+    slice_min(order_by = score) %>%
     ungroup() %>%
-    #Ensure that only the min values are used for plotting
-    subset(Risk == risk_min) %>%
     add_base_supply(supply_demand)
 
   # #write dataframe to Excel file
