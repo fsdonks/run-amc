@@ -37,11 +37,22 @@
     (if rec
       rec
       (throw (Exception. (str "There was no RC record for " SRC))))))
-  
+
+(defn get-rc-unavailable
+  "Returns the :rc-unavailable from the SupplyRecord Tags.  If
+  :rc-unavailable does not exist, throw an exception because we should
+  have set that beforehand during preprocessing when calling this."
+  [{:keys [rc-unavailable]}]
+  (if rc-unavailable
+    rc-unavailable
+    ;;Careful!! This won't throw 
+       (throw (Exception. (str ":rc-unavailable missing from
+  SupplyRecord Tags.")))))
+
 (defn rc-proj  ;;new
   [proj]
   (let [{:keys [Quantity Tags]} (rc-record proj) 
-        percent (:rc-unavailable Tags)
+        percent (get-rc-unavailable Tags)
         rc-demand (int (* Quantity percent))]
     (->> proj 
          :tables 
@@ -79,9 +90,12 @@
   "This is a copy of this function from the marathon.analysis.experiment namespace.
   Upper and lower bounds have been modified so we can look at AC supply levels
   above the current inventory."
-  [tables lower upper & {:keys [levels step min-distance] :or
+  [tables lower upper & {:keys [levels step min-distance input-map] :or
                          {step 1}}]
-  (let [init         (-> tables :SupplyRecords)
+  (let [
+        {:keys [lower-rc upper-rc] :or {lower-rc lower upper-rc
+                                        upper}} input-map
+        init         (-> tables :SupplyRecords)
         groups       (-> init e/grouped-supply)
         [lowAC highAC]   (r/bound->bounds (-> "AC" groups :Quantity)
                                           [lower upper]
@@ -119,7 +133,8 @@
   This function is modified so we can look at AC supply levels above the
   current inventory.  min-distance is the minimum distance of the
   supply quantity interval we are spreading our levels out across."
-  [min-distance prj lower upper]
+  [min-distance input-map prj lower upper]
   (for [tbls (ac-rc-supply-reduction-experiments (:tables prj) lower upper
-                  :levels (:levels prj) :min-distance min-distance)]
+                  :levels (:levels prj) :min-distance min-distance
+  :input-map input-map)]
     (assoc prj :tables tbls)))

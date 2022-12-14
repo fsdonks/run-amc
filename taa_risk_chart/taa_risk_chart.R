@@ -13,6 +13,32 @@ compute_score <- function(weights, df){
   }
   df
 }
+
+#Given a dataframe with a field denoted by compo (RC or RA) and a score column,
+#relabel the compo column so that it is monotonically increasing when score is
+#increasing.  assume that df is sorted!
+dewarblize<-function(df, compo) {
+  if(compo=="RA"){
+    other_compo<-"RC"
+  } else if (compo=="RC"){
+    other_compo<-"RA"
+  } else{
+    stop("invalid compo!")
+  }
+  groups<-c("SRC", other_compo)
+
+  df %>%
+    group_by(across(all_of(groups)))
+    mutate(compo = sort(compo)) %>% ##this won't work as is.  relook bc error here.
+    ungroup()
+}
+
+multi_compo_dewarble<-function(df){
+  no_warbles<- df %>% 
+    arrange(score) %>%
+    dewarblize("RC") %>%
+    dewarblize("RA")
+}
 #This function computes the scores and risks for each SRC's AC-RC permutation 
 functor <- 
   function(input, weights){
@@ -34,7 +60,8 @@ functor <-
                               score>=0.90 ~ "minor",
                               score>=0.80 ~ "modest",
                               score>=0.70 ~ "major",
-                              score>=0 ~ "extreme"))}
+                              score>=0 ~ "extreme"))} %>%
+      multi_compo_dewarble()
     
 make_taa_charts <- function(out_location, inputfiles, weights, supply_demand,
                             title_start, subtitle, caption_start){
