@@ -28,15 +28,15 @@
   if the quantity is 0.  The project has been filtered down to one SRC
   only at this point."
   [proj]
-  (let [{:keys [SRC] :as rec} (->> proj
-                                   :tables
-                                   :SupplyRecords
-                                   tbl/table-records
-                                   (filter #(= "RC" (:Component %)))
-                                   first)]
+  (let [rec (->> proj
+                 :tables
+                 :SupplyRecords
+                 tbl/table-records
+                 (filter #(= "RC" (:Component %)))
+                 first)]
     (if rec
       rec
-      (throw (Exception. (str "There was no RC record for " SRC))))))
+      (throw (Exception. (str "There was no RC record."))))))
 
 (defn get-rc-unavailable
   "Returns the :rc-unavailable from the SupplyRecord Tags.  If
@@ -101,7 +101,7 @@
                                           [lower upper]
                                           :min-distance min-distance)
         [lowRC highRC]   (r/bound->bounds (-> "RC" groups :Quantity)
-                                          [lower upper]
+                                          [lower-rc upper-rc]
                                           :min-distance min-distance)]
     (cond 
       (and (not= lowAC highAC) (not= lowRC highRC))
