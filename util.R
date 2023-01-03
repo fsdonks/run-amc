@@ -43,7 +43,10 @@ risk_charts <- function(data, out_location, title_start, subtitle, caption_start
       geom_tile(aes(fill=factor(Risk)), colour="black")+
       labs(title=title_start,
            subtitle=src_title,
-           caption=paste("SRC: ", src, "/", caption_start,"/", subtitle, "/Built on ", Sys.Date(), sep='')) +
+           caption=paste("SRC: ", src, "/", caption_start,"/", subtitle, 
+                         "/Built on ", 
+                         Sys.Date(),
+                         "          X indicates programmed force", sep='')) +
       xlab("# of RA Units")+
       ylab("# of RC Units")+
       scale_fill_manual(name = "Risk", values=setNames(risk_colors, risk_labels))+

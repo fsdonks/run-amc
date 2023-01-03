@@ -60,8 +60,8 @@ functor <-
                               score>=0.90 ~ "minor",
                               score>=0.80 ~ "modest",
                               score>=0.70 ~ "major",
-                              score>=0 ~ "extreme"))} %>%
-      multi_compo_dewarble()
+                              score>=0 ~ "extreme"))} #%>%
+      #multi_compo_dewarble()}
     
 make_taa_charts <- function(out_location, inputfiles, weights, supply_demand,
                             title_start, subtitle, caption_start){
