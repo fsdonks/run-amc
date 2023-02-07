@@ -55,6 +55,8 @@ make_edta_charts <- function(supply_path, demand_path, out_location, supply_dema
                             fill_rate>=0 ~ "extreme")) %>%
     add_base_supply(supply_demand)
   
+  #create out_location directory if it doesn't exist
+  dir.create(out_location)
   #writes the dataframe to an Excel file
   write_xlsx(data_fill, paste(out_location, "edta_output.xlsx", sep = ''))
   

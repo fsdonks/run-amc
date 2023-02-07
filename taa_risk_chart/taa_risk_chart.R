@@ -100,6 +100,8 @@ make_taa_charts <- function(out_location, inputfiles, weights, supply_demand,
     ungroup() %>%
     add_base_supply(supply_demand)
 
+  #create out_location directory if it doesn't exist
+  dir.create(out_location)
   # #write dataframe to Excel file
   # write_xlsx(data, "test_data.xlsx")
   
