@@ -9,7 +9,7 @@
 (def results (binding [r/*project->experiments*
                        
                        (partial project->experiments-ac-rc 5
-                                {:lower-rc 0.5 :upper-rc 0.7})]
+                                0.5 0.7)]
                (r/rand-runs proj :reps 2 :phases phases
                               :lower 0 :upper 0.1
                               :compo-lengths r/default-compo-lengths

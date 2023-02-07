@@ -90,12 +90,12 @@
   "This is a copy of this function from the marathon.analysis.experiment namespace.
   Upper and lower bounds have been modified so we can look at AC supply levels
   above the current inventory."
-  [tables lower upper & {:keys [levels step min-distance input-map] :or
-                         {step 1}}]
-  (let [
-        {:keys [lower-rc upper-rc] :or {lower-rc lower upper-rc
-                                        upper}} input-map
-        init         (-> tables :SupplyRecords)
+  [tables lower upper & {:keys [levels step min-distance input-map
+                                lower-rc upper-rc] :or
+                         {step 1
+                          lower-rc lower
+                          upper-rc upper}}]
+  (let [init         (-> tables :SupplyRecords)
         groups       (-> init e/grouped-supply)
         [lowAC highAC]   (r/bound->bounds (-> "AC" groups :Quantity)
                                           [lower upper]
@@ -133,8 +133,9 @@
   This function is modified so we can look at AC supply levels above the
   current inventory.  min-distance is the minimum distance of the
   supply quantity interval we are spreading our levels out across."
-  [min-distance input-map prj lower upper]
-  (for [tbls (ac-rc-supply-reduction-experiments (:tables prj) lower upper
-                  :levels (:levels prj) :min-distance min-distance
-  :input-map input-map)]
+  [min-distance lower-rc upper-rc prj lower upper]
+  (for [tbls (ac-rc-supply-reduction-experiments
+              (:tables prj) lower upper
+              :levels (:levels prj) :min-distance min-distance
+              :lower-rc lower-rc :upper-rc upper-rc)]
     (assoc prj :tables tbls)))
