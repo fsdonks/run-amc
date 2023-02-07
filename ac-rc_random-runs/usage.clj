@@ -6,13 +6,12 @@
 (def proj (a/load-project path))
 (def phases [["comp" 1 821] ["phase-1" 822 967]])
 
-(def results (binding [r/*project->experiments*
-                       
-                       (partial project->experiments-ac-rc 5
-                                0.5 0.7)]
-               (r/rand-runs proj :reps 2 :phases phases
+(def results (r/rand-runs-ac-rc 5 ;;min-distance
+                                0.5 ;;lower-rc
+                                0.7 ;;upper-rc
+                              proj :reps 2 :phases phases
                               :lower 0 :upper 0.1
                               :compo-lengths r/default-compo-lengths
-                              ))) 
+                              ))
 
 (r/write-output "results.txt" results) 
