@@ -11,7 +11,7 @@
                               (add-transform proj adjust-cannibals
                                 []) :reps 2 :phases phases
                               :lower 0 :upper 0.1
-                              :compo-lengths r/default-compo-lengths
+                              :compo-lengths default-compo-lengths
                               ))
 
-(r/write-output "results.txt" results) 
+(write-output "results.txt" results) 
