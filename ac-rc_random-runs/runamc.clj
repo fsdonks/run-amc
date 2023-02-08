@@ -2,7 +2,6 @@
 ;It modifies several functions in that namesapce to do AC and RC supply variations with random initial conditions. 
 (ns marathon.analysis.runamc
   (:require
-   [taa.capacity :as capacity]
    [marathon.analysis.random :as r]
    [marathon.analysis :as a]
    [marathon.analysis.util :as util]
