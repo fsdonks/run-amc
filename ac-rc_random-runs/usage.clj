@@ -1,3 +1,4 @@
+(require 'marathon.analysis.random)
 (ns marathon.analysis.random)
 ;;example usage
 ;;m4 workbook should have all NG and RC supply coded as being RC
