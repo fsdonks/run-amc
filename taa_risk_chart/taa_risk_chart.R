@@ -26,16 +26,18 @@ dewarblize<-function(df, compo) {
     stop("invalid compo!")
   }
   groups<-c("SRC", other_compo)
-
   df %>%
-    group_by(across(all_of(groups)))
-    mutate(compo = sort(compo)) %>% ##this won't work as is.  relook bc error here.
+    group_by(across(all_of(groups))) %>%
+    mutate("{compo}"  := sort((!!as.name(compo)))) %>%
     ungroup()
 }
 
 multi_compo_dewarble<-function(df){
   no_warbles<- df %>% 
     arrange(score) %>%
+    #Assume that score is more sensitive to RA changes so dewarbalize the RA
+    #scores within each RC inventory first, and this matches with the 1-n
+    #relabeling.
     dewarblize("RC") %>%
     dewarblize("RA")
 }
@@ -60,8 +62,8 @@ functor <-
                               score>=0.90 ~ "minor",
                               score>=0.80 ~ "modest",
                               score>=0.70 ~ "major",
-                              score>=0 ~ "extreme"))} #%>%
-      #multi_compo_dewarble()}
+                              score>=0 ~ "extreme"))
+    }
     
 make_taa_charts <- function(out_location, inputfiles, weights, supply_demand,
                             title_start, subtitle, caption_start){
@@ -98,7 +100,8 @@ make_taa_charts <- function(out_location, inputfiles, weights, supply_demand,
     #Ensure that only the min scores are used for plotting, should only have one record.
     slice_min(order_by = score, with_ties=FALSE) %>%
     ungroup() %>%
-    add_base_supply(supply_demand)
+    add_base_supply(supply_demand) %>%
+    multi_compo_dewarble()
 
   #create out_location directory if it doesn't exist
   dir.create(out_location)
