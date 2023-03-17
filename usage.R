@@ -1,6 +1,13 @@
-
-my_runamc_folder=paste(getwd(), "/workspace/run-amc/", sep='')
-#my_runamc_folder=paste(getwd(), "/", sep='')
+#assume that this usage file is in the top of the run-amc/ folder, so we
+#check if we are running from Rstudio or sourcing this file and set the
+#location of the runamc_folder accordingly.
+if ( if(!is.na(Sys.getenv("RSTUDIO", unset = NA))) sys.nframe() == 4L 
+     else sys.nframe() == 0L) 
+{ 
+  my_runamc_folder <- paste(getSrcDirectory(function(dummy) {dummy}), "/", sep='')
+} else {
+  my_runamc_folder <- paste(getwd(), "/workspace/run-amc/", sep='')
+}
 
 source(paste(my_runamc_folder, "util.R", sep=''))
 #load code from the two runamc scripts
