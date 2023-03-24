@@ -35,11 +35,11 @@ dewarblize<-function(df, compo) {
 multi_compo_dewarble<-function(df){
   no_warbles<- df %>% 
     arrange(score) %>%
-    #Assume that score is more sensitive to RA changes so dewarbalize the RA
-    #scores within each RC inventory first, and this matches with the 1-n
-    #relabeling.
-    dewarblize("RC") %>%
-    dewarblize("RA")
+    #In order to match the 1-n, we should dewarblize the RA column within
+    #each RC supply first, because chances are low that there's another
+    #warble in the other compo direction.
+    dewarblize("RA") %>%
+    dewarblize("RC")
 }
 #This function computes the scores and risks for each SRC's AC-RC permutation 
 functor <- 
