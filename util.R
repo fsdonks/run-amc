@@ -1,8 +1,7 @@
-#If we don't have ggplot2 version 3.3.5 or greater, than we will miss
-#legend entries that show in the plot and the order of legend entries
-#may vary.
-if(packageVersion("ggplot2")<"3.3.5") {
-  stop("Need ggplot2 version >= 3.3.5 for intended behavior.")
+#As of ggplot2 version 3.5, we had to make changes so that all factor levels
+#appear in the legend and are sorted according to increasing risk.
+if(packageVersion("ggplot2")<"3.5") {
+  stop("Need ggplot2 version >= 3.5 for intended behavior.")
 }
 
 #Used to plot the Programmed Force/Baseline Supply per SRC
@@ -40,7 +39,7 @@ risk_charts <- function(data, out_location, title_start, subtitle, caption_start
     src_title=src_data['UNTDS'][[1]]
     g <- 
       ggplot(src_data, aes(x=RA, y=RC)) + 
-      geom_tile(aes(fill=factor(Risk)), colour="black")+
+      geom_tile(aes(fill=factor(Risk, levels=risk_labels)), colour="black", show.legend=TRUE)+
       labs(title=title_start,
            subtitle=src_title,
            caption=paste("SRC: ", src, "/", caption_start,"/", subtitle, 
@@ -49,7 +48,7 @@ risk_charts <- function(data, out_location, title_start, subtitle, caption_start
                          "          X indicates programmed force", sep='')) +
       xlab("# of RA Units")+
       ylab("# of RC Units")+
-      scale_fill_manual(name = "Risk", values=setNames(risk_colors, risk_labels))+
+      scale_fill_manual(name = "Risk", values=setNames(risk_colors, risk_labels), drop=FALSE)+
       scale_x_continuous(breaks=integer_breaks(5))+
       scale_y_continuous(breaks=integer_breaks(5))+
       geom_text(x=src_data$prog_RA, y=src_data$prog_RC, label="X")+
@@ -62,6 +61,6 @@ risk_charts <- function(data, out_location, title_start, subtitle, caption_start
             plot.caption = element_text(hjust = 0, size=9),
             plot.caption.position =  "plot")
     print(g)
-    ggsave(paste(out_location, src, ".png", sep=""))
+    ggsave(paste(out_location, src, ".jpeg", sep=""), device="jpeg")
   }
 }
