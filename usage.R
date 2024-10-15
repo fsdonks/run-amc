@@ -6,14 +6,19 @@ if ( if(!is.na(Sys.getenv("RSTUDIO", unset = NA))) sys.nframe() == 4L
 { 
   my_runamc_folder <- paste(getSrcDirectory(function(dummy) {dummy}), "/", sep='')
 } else {
-  my_runamc_folder <- paste(getwd(), "/workspace/run-amc/", sep='')
+  my_runamc_folder <- paste(getwd(), "/", sep='')
 }
+
+#I think you'll need R version 4 or later for this.
 
 source(paste(my_runamc_folder, "util.R", sep=''))
 #load code from the two runamc scripts
 #these will both depend on utils.R as well.
 source(paste(my_runamc_folder, "edta_risk_chart/edta_risk.R", sep=''))
 source(paste(my_runamc_folder, "taa_risk_chart/taa_risk_chart.R", sep=''))
+source(paste(my_runamc_folder, "shave_charts/shave_charter_preprocessor.R", sep=''))
+source(paste(my_runamc_folder, "shave_charts/shave_charter.R", sep=''))
+
 supply_demand=paste(my_runamc_folder, "SupplyDemand_Original.xlsx", sep='')
 
 #What appears in the title before -SRC
@@ -45,3 +50,9 @@ taa_subtitle="OPS based 36 year future"
 
 make_taa_charts(output_path, results_files, weights, supply_demand,
                 taa_title, taa_subtitle, caption_start)
+
+##Building shave charts
+##First, do this preprocessing to feed the shave chart script.
+results1_out_name<-"fatShaveData1.txt"
+results2_out_name<-"fatShaveData2.txt"
+src_str<-supply_demand
