@@ -6,8 +6,8 @@ library(data.table)
 library(readxl)
 
 post_process<-function(results1_name, results2_name, src_str_path,
-                       out1_name, out2_name, root, phase3_length_1,
-                       phase3_length_2, comp1_length) {
+                       out1_name, out2_name, root, phase_name, phase_length_1,
+                       phase_length_2, comp_name, comp_length) {
   out1<-paste(root, out1_name, sep='')
   out2<-paste(root, out2_name, sep='')
   results2<-paste(root, results2_name, sep='')
@@ -87,8 +87,8 @@ post_process<-function(results1_name, results2_name, src_str_path,
     subset(phase=="phase3") %>%
     group_by(SRC, AC, NG, RC, phase) %>%
     #summarise(Demand = mean(Demand)/48, RAdmet = mean(RAFill) + mean(RAExcess), RCdmet = mean(RCFill) + mean(RCExcess))
-    summarise(Demand =mean(Demand)/phase3_length_1, SupplyRA = (mean(RAFill) + mean(RAExcess))/phase3_length_1,
-              SupplyRC = (mean(RCFill)+mean(RCExcess))/phase3_length_1, RCTotal = mean(RCTotal+NGTotal)/phase3_length_1)
+    summarise(Demand =mean(Demand)/phase_length_1, SupplyRA = (mean(RAFill) + mean(RAExcess))/phase_length_1,
+              SupplyRC = (mean(RCFill)+mean(RCExcess))/phase_length_1, RCTotal = mean(RCTotal+NGTotal)/phase_length_1)
   
   #shave chart data = (average daily supply ra + average daily supply rc) / average daily demand 
   #reduces to average supply ra + average supply rc / average demand reduces to 
@@ -98,8 +98,8 @@ post_process<-function(results1_name, results2_name, src_str_path,
     subset(phase=="phase3") %>%
     group_by(SRC, AC, NG, RC, phase) %>%
     #summarise(Demand = mean(Demand)/48, RAdmet = mean(RAFill) + mean(RAExcess), RCdmet = mean(RCFill) + mean(RCExcess))
-    summarise(Demand =mean(Demand)/phase3_length_2, SupplyRA = (mean(RAFill) + mean(RAExcess))/phase3_length_2,
-              SupplyRC = (mean(RCFill)+mean(RCExcess))/phase3_length_2, RCTotal = mean(RCTotal+NGTotal)/phase3_length_2)
+    summarise(Demand =mean(Demand)/phase_length_2, SupplyRA = (mean(RAFill) + mean(RAExcess))/phase_length_2,
+              SupplyRC = (mean(RCFill)+mean(RCExcess))/phase_length_2, RCTotal = mean(RCTotal+NGTotal)/phase_length_2)
   
   phase3_fill_1 <- phase3_fill_1 %>%
     mutate("TotalSupply" = SupplyRA + SupplyRC)
@@ -188,8 +188,8 @@ post_process<-function(results1_name, results2_name, src_str_path,
   comp1_fill <- results_data2%>%
     subset(phase=="comp1") %>%
     group_by(SRC, AC, NG, RC, phase) %>%
-    summarise(Demand =mean(Demand)/comp1_length, SupplyRA = (mean(RAFill) + mean(RAExcess))/comp1_length,
-              SupplyRC = (mean(RCFill)+mean(RCExcess))/comp1_length, RCTotal = mean(RCTotal+NGTotal)/comp1_length)
+    summarise(Demand =mean(Demand)/comp_length, SupplyRA = (mean(RAFill) + mean(RAExcess))/comp_length,
+              SupplyRC = (mean(RCFill)+mean(RCExcess))/comp_length, RCTotal = mean(RCTotal+NGTotal)/comp_length)
   
   comp1_fill <- comp1_fill %>%
     mutate("TotalSupply" = SupplyRA + SupplyRC)
