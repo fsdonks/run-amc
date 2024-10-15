@@ -56,3 +56,5 @@ make_taa_charts(output_path, results_files, weights, supply_demand,
 results1_out_name<-"fatShaveData1.txt"
 results2_out_name<-"fatShaveData2.txt"
 src_str<-supply_demand
+
+##ended off here after making phases variable.

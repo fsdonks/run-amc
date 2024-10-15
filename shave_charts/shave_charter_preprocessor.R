@@ -84,7 +84,7 @@ post_process<-function(results1_name, results2_name, src_str_path,
   
   
   phase3_fill_1 <- results_data1 %>%
-    subset(phase=="phase3") %>%
+    subset(phase==phase_name) %>%
     group_by(SRC, AC, NG, RC, phase) %>%
     #summarise(Demand = mean(Demand)/48, RAdmet = mean(RAFill) + mean(RAExcess), RCdmet = mean(RCFill) + mean(RCExcess))
     summarise(Demand =mean(Demand)/phase_length_1, SupplyRA = (mean(RAFill) + mean(RAExcess))/phase_length_1,
@@ -95,7 +95,7 @@ post_process<-function(results1_name, results2_name, src_str_path,
   #sum(supply ra) + sum(supply rc) / sum(demand)
   #bar chart data mean((RCFill+RCExcess)/Demand)
   phase3_fill_2 <- results_data2 %>%
-    subset(phase=="phase3") %>%
+    subset(phase==phase_name) %>%
     group_by(SRC, AC, NG, RC, phase) %>%
     #summarise(Demand = mean(Demand)/48, RAdmet = mean(RAFill) + mean(RAExcess), RCdmet = mean(RCFill) + mean(RCExcess))
     summarise(Demand =mean(Demand)/phase_length_2, SupplyRA = (mean(RAFill) + mean(RAExcess))/phase_length_2,
@@ -186,7 +186,7 @@ post_process<-function(results1_name, results2_name, src_str_path,
   
   # Competition Data ======================================================================================================================
   comp1_fill <- results_data2%>%
-    subset(phase=="comp1") %>%
+    subset(phase==comp_name) %>%
     group_by(SRC, AC, NG, RC, phase) %>%
     summarise(Demand =mean(Demand)/comp_length, SupplyRA = (mean(RAFill) + mean(RAExcess))/comp_length,
               SupplyRC = (mean(RCFill)+mean(RCExcess))/comp_length, RCTotal = mean(RCTotal+NGTotal)/comp_length)
@@ -298,7 +298,7 @@ post_process<-function(results1_name, results2_name, src_str_path,
   
   barChartdata <- average_fill_combined %>%
     #select(-`rep-seed`) %>%
-    subset(phase=="comp1" |phase== "phase3") %>%
+    subset(phase==comp_name |phase== phase_name) %>%
     arrange(Scenario,SRC, -AC)
   
   barChartdata <- barChartdata %>%
